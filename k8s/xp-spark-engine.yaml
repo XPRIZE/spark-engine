@@ -20,12 +20,12 @@ spec:
     spec:
       containers:
       - name: spark-engine
-        image: us-central1-docker.pkg.dev/vatom-459619/spark-engine-repo/spark-engine:v7
+        image: us-central1-docker.pkg.dev/vatom-459619/spark-engine-repo/spark-engine:v8
         imagePullPolicy: Always
         ports:
         - containerPort: 3000
         env:
-        - name: STUDIO_BASE
+        - name: STUDIO_API_BASE
           value: "https://studio-api.xprize.org"
         - name: PGCONN
           value: "postgresql://sparkuser:h5&epTY*Cnl2@10.9.48.3:5432/spark-engine"
