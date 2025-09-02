@@ -2,12 +2,13 @@ import { http, services, utils } from "@varius.io/framework";
 import * as SparkPlugins from "#src/models/spark-plugins";
 import axios from "axios";
 import { Communities } from "#src/models";
+import { putFirehoseEvent } from "#src/utils/firehose";
 
 const crypto = require("crypto").webcrypto;
 
 const { MATRIX_DOMAIN } = process.env
 
-export async function sendEventToKinesis(accessToken: string, businessId: string, userId: string, event: any) {
+export async function sendEventToFirehose(accessToken: string, businessId: string, userId: string, event: any) {
     try {
 
         if (!event.room_id) return
@@ -56,12 +57,12 @@ export async function sendEventToKinesis(accessToken: string, businessId: string
 
         // Send kinesis analytics event
         if (kinesisEvent.event) {
-            utils.logger.info("Sending event to kinesis:", JSON.stringify(kinesisEvent));
-            await utils.analytics.putKinesisEvent(kinesisEvent);
+            utils.logger.info("Sending event to firehose:", JSON.stringify(kinesisEvent));
+            await putFirehoseEvent(kinesisEvent);
         }
 
     } catch (err) {
-        utils.logger.error("Error sending event to kinesis:", err, event.type, JSON.stringify(event));
+        utils.logger.error("Error sending event to firehose:", err, event.type, JSON.stringify(event));
     }
 }
 
@@ -133,7 +134,7 @@ export default async function (lambdaEvent: http.lambda.LambdaEvent) {
             // Verify that the communities are initialized
             await Communities.sync(pg, ownerMatrixToken, businessId);
             
-            await sendEventToKinesis(ownerMatrixToken, businessId, userId, event);
+            await sendEventToFirehose(ownerMatrixToken, businessId, userId, event);
         } catch (e) {
 
             // If the user is not found, just ignore and continue     
