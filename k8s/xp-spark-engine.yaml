@@ -33,6 +33,8 @@ spec:
           value: "https://matrix.xprize.org/"
         - name: NODE_ENV
           value: "development"
+        - name: SQS_FIREHOSE_QUEUE_URL
+          value: "https://sqs.us-west-1.amazonaws.com/915791390111/firehose_prod_event_worker"
 ---
 apiVersion: v1
 kind: Service
