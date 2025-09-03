@@ -35,6 +35,14 @@ spec:
           value: "development"
         - name: SQS_FIREHOSE_QUEUE_URL
           value: "https://sqs.us-west-1.amazonaws.com/915791390111/firehose_prod_event_worker"
+        - name: OIDC_CLIENT_ID
+          value: "sparkengine"
+        - name: OIDC_CLIENT_SECRET
+          value: "g76M9qsEAO6UZaYoNpoHA"
+        - name: OIDC_API_BASE
+          value: "https://id-xpc-api.xprize.org"
+        - name: MATRIX_API_BASE
+          value: "https://matrix.xprize.org/"
 ---
 apiVersion: v1
 kind: Service
