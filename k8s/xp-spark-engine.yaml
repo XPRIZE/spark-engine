@@ -20,11 +20,17 @@ spec:
     spec:
       containers:
       - name: spark-engine
-        image: us-central1-docker.pkg.dev/vatom-459619/spark-engine-repo/spark-engine:v10
+        image: us-central1-docker.pkg.dev/vatom-459619/spark-engine-repo/spark-engine:v11
         imagePullPolicy: Always
         ports:
         - containerPort: 3000
         env:
+        - name: AWS_REGION
+          value: "us-west-1"
+        - name: AWS_ACCESS_KEY_ID
+          value: "AKIA5KOLLUWP6B5KZEMF"
+        - name: AWS_SECRET_ACCESS_KEY
+          value: "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"
         - name: STUDIO_API_BASE
           value: "https://studio-api.xprize.org"
         - name: PGCONN
@@ -43,6 +49,14 @@ spec:
           value: "https://id-xpc-api.xprize.org"
         - name: MATRIX_API_BASE
           value: "https://matrix.xprize.org/"
+        - name: MATRIX_PGUSER
+          value: "synapse_user"
+        - name: MATRIX_PGPASSWORD
+          value: "$jxm3V4c25Gpst$"
+        - name: MATRIX_PGDATABASE
+          value: "xpsynapse"
+        - name: MATRIX_PGHOST
+          value: "10.9.48.3"
 ---
 apiVersion: v1
 kind: Service

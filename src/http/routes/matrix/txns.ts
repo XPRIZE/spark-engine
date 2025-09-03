@@ -13,14 +13,18 @@ export async function sendEventToFirehose(accessToken: string, businessId: strin
 
         if (!event.room_id) return
 
+        utils.logger.info("Called Matrix Server: getRoomAliases");
         const [ alias ] = await services.matrix.getRoomAliases(accessToken, event.room_id)
+        utils.logger.info("Called Matrix Server: getRoomAliases");
         if (!alias) return
 
         // `${space.businessId}.${space.id}
         const spaceId = alias.split(":")[0].split(".")[1]
         if (!spaceId) return
 
+        utils.logger.info("Called Matrix Server: GET community");
         const community = await Communities.getByChildId(event.room_id);
+        utils.logger.info("Called Matrix Server: GET community");
 
         const eventTimestamp = event.content?.ts || event.origin_server_ts || Date.now()
         const kinesisEvent: any = {
