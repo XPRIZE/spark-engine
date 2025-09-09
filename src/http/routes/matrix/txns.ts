@@ -2,24 +2,29 @@ import { http, services, utils } from "@varius.io/framework";
 import * as SparkPlugins from "#src/models/spark-plugins";
 import axios from "axios";
 import { Communities } from "#src/models";
+import { putFirehoseEvent } from "#src/utils/firehose";
 
 const crypto = require("crypto").webcrypto;
 
 const { MATRIX_DOMAIN } = process.env
 
-export async function sendEventToKinesis(accessToken: string, businessId: string, userId: string, event: any) {
+export async function sendEventToFirehose(accessToken: string, businessId: string, userId: string, event: any) {
     try {
 
         if (!event.room_id) return
 
+        utils.logger.info("Called Matrix Server: getRoomAliases : Started");
         const [ alias ] = await services.matrix.getRoomAliases(accessToken, event.room_id)
+        utils.logger.info("Called Matrix Server: getRoomAliases : Completed");
         if (!alias) return
 
         // `${space.businessId}.${space.id}
         const spaceId = alias.split(":")[0].split(".")[1]
         if (!spaceId) return
 
+        utils.logger.info("Called Matrix Server: GET Community: Started");
         const community = await Communities.getByChildId(event.room_id);
+        utils.logger.info("Called Matrix Server: GET Community: Completed");
 
         const eventTimestamp = event.content?.ts || event.origin_server_ts || Date.now()
         const kinesisEvent: any = {
@@ -56,12 +61,12 @@ export async function sendEventToKinesis(accessToken: string, businessId: string
 
         // Send kinesis analytics event
         if (kinesisEvent.event) {
-            utils.logger.info("Sending event to kinesis:", JSON.stringify(kinesisEvent));
-            await utils.analytics.putKinesisEvent(kinesisEvent);
+            utils.logger.info("Sending event to firehose:", JSON.stringify(kinesisEvent));
+            await putFirehoseEvent(kinesisEvent);
         }
 
     } catch (err) {
-        utils.logger.error("Error sending event to kinesis:", err, event.type, JSON.stringify(event));
+        utils.logger.error("Error sending event to firehose:", err, event.type, JSON.stringify(event));
     }
 }
 
@@ -133,7 +138,7 @@ export default async function (lambdaEvent: http.lambda.LambdaEvent) {
             // Verify that the communities are initialized
             await Communities.sync(pg, ownerMatrixToken, businessId);
             
-            await sendEventToKinesis(ownerMatrixToken, businessId, userId, event);
+            await sendEventToFirehose(ownerMatrixToken, businessId, userId, event);
         } catch (e) {
 
             // If the user is not found, just ignore and continue     
