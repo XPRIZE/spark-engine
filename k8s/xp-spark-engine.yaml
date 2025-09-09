@@ -24,13 +24,10 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: 3000
+        envFrom:
+            - secretRef:
+                name: k8s-service-account
         env:
-        - name: AWS_REGION
-          value: "us-west-1"
-        - name: AWS_ACCESS_KEY_ID
-          value: "AKIA5KOLLUWP6B5KZEMF"
-        - name: AWS_SECRET_ACCESS_KEY
-          value: "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"
         - name: STUDIO_API_BASE
           value: "https://studio-api.xprize.org"
         - name: PGCONN
