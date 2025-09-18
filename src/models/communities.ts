@@ -1,5 +1,6 @@
 import { services } from "@varius.io/framework";
 import MatrixDB from "#src/services/mxdb";
+import { exchangeTokenWithDevice } from "#src/services/matrix";
 
 export interface Community {
 	id: string; // This is the matrix room id
@@ -93,7 +94,7 @@ export async function sync(pg: services.pg, matrixOrVatomToken: string, business
 		let token = matrixOrVatomToken
 		if (matrixOrVatomToken.length > 100) {
 			// This is a vatom token, exchange it for a matrix token
-			const { access_token } = await services.matrix.exchangeToken(matrixOrVatomToken)
+			const { access_token } = await exchangeTokenWithDevice(matrixOrVatomToken)
 			token = access_token
 		}
 		
