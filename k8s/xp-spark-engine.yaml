@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: spark-engine
-        image: us-central1-docker.pkg.dev/vatom-459619/spark-engine-repo/spark-engine:v11
+        image: us-central1-docker.pkg.dev/vatom-459619/spark-engine-repo/spark-engine:v14
         imagePullPolicy: Always
         ports:
         - containerPort: 3000
